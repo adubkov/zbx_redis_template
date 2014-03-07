@@ -15,15 +15,17 @@ Zabbix template for Redis (node.js or python)
 
 1) Put `zbx_redis.conf` into your `zabbix_agentd.conf` config subdirectory (like: `/etc/zabbix/zabbix_agentd.d/`).
 
-2) Change your zabbix_agentd.conf config so it will include this file:
+2) Change script name in `zbx_redis.conf` to use `zbx_redis_stats.py` if need it (by default there is a .js version script).
+
+3) Change your zabbix_agentd.conf config so it will include this file:
 ```
 Include=/etc/zabbix/zabbix_agentd.d/
 ```
-3) Put `zbx_redis_stats.js` or `zbx_redis_stats.py` into your `zabbix_agentd.conf` config subdirectory (like: `/etc/zabbix/script/redis/`).
+4) Put `zbx_redis_stats.js` or `zbx_redis_stats.py` into your `zabbix_agentd.conf` config subdirectory (like: `/etc/zabbix/script/redis/`).
 
-4) Change paths in `zbx_redis.conf` if need it.
+5) Change paths in `zbx_redis.conf` if need it.
 
-5) In working dir (`/etc/zabbix/script/redis/`) do:
+6) In working dir (`/etc/zabbix/script/redis/`) do:
 
 For use node.js verson script:
 ```
@@ -36,4 +38,4 @@ For use python verson script:
 pip install redis
 chmod +x zbx_redis_stats.py
 ```
-6) Import `zbx_redis_template.xml` into zabbix in Tepmplate section web gui.
+7) Import `zbx_redis_template.xml` into zabbix in Tepmplate section web gui.
