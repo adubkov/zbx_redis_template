@@ -3,6 +3,7 @@
 # This content is licensed GNU GPL v2
 # Author: Alexey Dubkov <alexey.dubkov@gmail.com>
 #
+
 import sys, redis, json, re
 
 host = (len(sys.argv) >= 2) and sys.argv[1] or 'localhost'
@@ -39,10 +40,10 @@ if metric:
 		if metric in server_info.keys():
 			print server_info[metric]
 
-
-	{'llen': llen,
-	 'llenall': llensum,
-	 'list_key_space_db': list_key_space_db,
+	{
+		'llen': llen,
+		'llenall': llensum,
+		'list_key_space_db': list_key_space_db,
 	}.get(metric, default)()
 
 else:

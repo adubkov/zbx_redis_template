@@ -1,21 +1,19 @@
 #!/usr/local/bin/node
 #
-# This content is licensed GNU GPL v2
+# This software is licensed GNU GPL v2
 # Author: Alexey Dubkov <alexey.dubkov@gmail.com>
 #
-
 
 var host = process.argv[2] || 'localhost',
     port = 6379,
     metric = process.argv[3],
-    db = process.argv[4];
+    db = process.argv[4] || 'none';
 
-var redis = require('redis');
-var client = redis.createClient(port, host);
+var client = require('redis').createClient(port, host);
 
 var llenall = i = rlen = 0;
 
-client.on('llenall', function(v){
+client.on('llenall', function(v) {
     llenall += v;
     if (i == rlen) {
         console.log(llenall);
@@ -23,29 +21,30 @@ client.on('llenall', function(v){
     }
 });
 
-client.on("ready", function(err){
+client.on('ready', function(err) {
 
     if (metric) {
 
         if (db && client.server_info.hasOwnProperty(db)) {
-            var t = client.server_info[db].match("keys=(\\d+),expires=(\\d+),avg_ttl=(\\d+)");
+            var t = client.server_info[db]
+                .match('keys=(\\d+),expires=(\\d+),avg_ttl=(\\d+)');
             client.server_info.key_space_db_keys = t[1];
             client.server_info.key_space_db_expires = t[2];
             client.server_info.key_space_db_avg_ttl = t[3];
         }
 
-        switch(metric) {
+        switch (metric) {
             case 'llen':
-                client.llen(db, function(err, res){
+                client.llen(db, function(err, res) {
                     console.log(res);
                     client.emit('quit');
                 });
                 break;
             case 'llenall':
-                client.keys('*', function(err, res){
+                client.keys('*', function(err, res) {
                     rlen = res.length;
-                    res.map(function(v){
-                        client.llen(v, function (err, res){
+                    res.map(function(v) {
+                        client.llen(v, function(err, res) {
                             i++;
                             client.emit('llenall', res);
                         });
@@ -67,16 +66,16 @@ client.on("ready", function(err){
                 break;
         }
     } else {
-        console.log("Not selected metri");
+        console.log('Not selected metric');
         client.emit('quit');
     }
 
 });
 
-client.on("error", function(err){
+client.on('error', function(err) {
     console.log('Error: ' + err);
 });
 
-client.on('quit', function(){
+client.on('quit', function() {
     client.quit();
 });
