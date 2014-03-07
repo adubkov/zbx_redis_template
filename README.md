@@ -24,11 +24,13 @@ Include=/etc/zabbix/zabbix_agentd.d/
 4) Change paths in `zbx_redis.conf` if need it.
 
 5) In working dir (`/etc/zabbix/script/redis/`) do:
+
 For use node.js verson script:
 ```
 npm install redis
 chmod +x zbx_redis_stats.js
 ```
+
 For use python verson script:
 ```
 pip install redis
