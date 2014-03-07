@@ -4,15 +4,23 @@
 # Author: Alexey Dubkov <alexey.dubkov@gmail.com>
 #
 
+
 var host = process.argv[2] || 'localhost',
     port = 6379,
     metric = process.argv[3],
     db = process.argv[4];
 
-var client = require('redis').createClient(port, host);
+var redis = require('redis');
+var client = redis.createClient(port, host);
 
-client.on("error", function(err){
-    console.log('Error: ' + err);
+var llenall = i = rlen = 0;
+
+client.on('llenall', function(v){
+    llenall += v;
+    if (i == rlen) {
+        console.log(llenall);
+        client.emit('quit');
+    }
 });
 
 client.on("ready", function(err){
@@ -28,23 +36,47 @@ client.on("ready", function(err){
 
         switch(metric) {
             case 'llen':
-                client.llen(process.argv[4], function(err, res){console.log(res);});
+                client.llen(db, function(err, res){
+                    console.log(res);
+                    client.emit('quit');
+                });
+                break;
+            case 'llenall':
+                client.keys('*', function(err, res){
+                    rlen = res.length;
+                    res.map(function(v){
+                        client.llen(v, function (err, res){
+                            i++;
+                            client.emit('llenall', res);
+                        });
+                    });
+                });
+
                 break;
             case 'list_key_space_db':
                 if (client.server_info.db0) {
                     console.log('db0');
                 } else
                     console.log('database_detect');
+                client.emit('quit');
                 break;
             default:
                 if (client.server_info.hasOwnProperty(metric))
                     console.log(client.server_info[metric]);
+                client.emit('quit');
                 break;
         }
     } else {
         console.log("Not selected metri");
+        client.emit('quit');
     }
 
-    client.quit();
+});
 
+client.on("error", function(err){
+    console.log('Error: ' + err);
+});
+
+client.on('quit', function(){
+    client.quit();
 });
