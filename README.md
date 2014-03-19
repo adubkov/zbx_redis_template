@@ -32,7 +32,7 @@ Note: trap-message works only with python script
 ```
 zabbix_host = '127.0.0.1'	# Zabbix Server IP
 zabbix_port = 10051			# Zabbix Server Port
-hostname = 'redis.srv.name'	# Name of monitored server, like it shows in zabbix web ui display
+hostname = 'redis.srv.name'	# Name of monitored server, like it shows in zabbix web ui
 redis_port = 6379			# Redis Server port
 ```
 
