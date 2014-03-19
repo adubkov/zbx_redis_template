@@ -21,13 +21,14 @@ In trap-message mode, script will be periodically accumulate redis's parameters 
 
 If you planning to capture many redis parameters and do it often. I would recomend  to use trap-message mode.
 
-Note: trap-message works only on python version of script
+Note: trap-message works only with python script
 
 ### Install in trap-message mode
 
 1) Put `zbx_redis_stats.py` into your monitoring scripts path (like: `/etc/zabbix/script/redis/`).
 
 2) Change next section in zbx_redis_stats.py, to your configuration:
+
 '''
 zabbix_host = '127.0.0.1'	# Zabbix Server IP
 zabbix_port = 10051			# Zabbix Server Port
