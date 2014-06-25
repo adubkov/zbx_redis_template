@@ -39,7 +39,7 @@ def send_to_zabbix(metrics, zabbix_host='127.0.0.1', zabbix_port=10051):
         zabbix.sendall(packet)
         resp_hdr = _recv_all(zabbix, 13)
         if not resp_hdr.startswith('ZBXD\x01') or len(resp_hdr) != 13:
-            print 'Wrong zabbix response'
+            print ('Wrong zabbix response')
             return False
         resp_body_len = struct.unpack('<Q', resp_hdr[5:])[0]
         resp_body = zabbix.recv(resp_body_len)
@@ -48,11 +48,11 @@ def send_to_zabbix(metrics, zabbix_host='127.0.0.1', zabbix_port=10051):
         resp = json.loads(resp_body)
         #print resp
         if resp.get('response') != 'success':
-            print 'Got error from Zabbix: %s' % resp
+            print ('Got error from Zabbix: %s' % resp)
             return False
         return True
     except:
-        print 'Error while sending data to Zabbix'
+        print ('Error while sending data to Zabbix')
         return False
 
 
@@ -101,24 +101,24 @@ else:
 			server_info['key_space_db_avg_ttl'] = server_info[db]['avg_ttl']
 		
 		def llen():
-			print client.llen(db)
+			print (client.llen(db))
 
 		def llensum():
 			keys = client.keys('*')
 			llensum = 0
 			for key in keys:
 				llensum += client.llen(key)
-			print llensum
+			print (llensum)
 
 		def list_key_space_db():
 			if db in server_info:
-				print db
+				print (db)
 			else:
-				print 'database_detect'
+				print ('database_detect')
 
 		def default():
 			if metric in server_info.keys():
-				print server_info[metric]
+				print (server_info[metric])
 
 
 		{
@@ -128,4 +128,4 @@ else:
 		}.get(metric, default)()
 
 	else:
-		print 'Not selected metric';
+		print ('Not selected metric');
