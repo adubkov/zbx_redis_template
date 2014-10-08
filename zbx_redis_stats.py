@@ -1,11 +1,18 @@
 #!/usr/bin/python
 
-import sys, redis, json, re, struct, time, socket
+import sys, redis, json, re, struct, time, socket, argparse
+
+parser = argparse.ArgumentParser(description='Zabbix Redis status script')
+parser.add_argument('hostname')
+parser.add_argument('metric')
+parser.add_argument('db',default='none',nargs='?')
+parser.add_argument('-p','--port',dest='redis_port',action='store',help='Redis server port',default=6379,type=int)
+parser.add_argument('-a','--auth',dest='redis_pass',action='store',help='Redis server pass',default=None)
+args = parser.parse_args()
 
 zabbix_host = '127.0.0.1'	# Zabbix Server IP
 zabbix_port = 10051			# Zabbix Server Port
 hostname = 'redis.srv.name'	# Name of monitored server like it shows in zabbix web ui display
-redis_port = 6379			# Redis Server port
 
 class Metric(object):
     def __init__(self, host, key, value, clock=None):
@@ -67,41 +74,18 @@ def _recv_all(sock, count):
 
 
 
-if len(sys.argv) <= 2:
-	host = (len(sys.argv) >= 2) and sys.argv[1] or hostname
-
-	client = redis.StrictRedis(host=host, port=redis_port)
+if args.hostname and args.metric:
+        client = redis.StrictRedis(host=args.hostname, port=args.redis_port, password=args.redis_pass)
 	server_info = client.info()
 
-	a = []
-	for i in server_info:
-		a.append(Metric(host, ('redis[%s]' % i), server_info[i]))
-
-	keys = client.keys('*')
-	llensum = 0
-	for key in keys:
-		llensum += client.llen(key)
-	a.append(Metric(host, 'redis[llenall]', llensum))
-
-
-	send_to_zabbix(a, zabbix_host, zabbix_port)
-
-else:
-	host = (len(sys.argv) >= 2) and sys.argv[1] or 'localhost'
-	metric = (len(sys.argv) >= 3) and sys.argv[2]
-	db = (len(sys.argv) >= 4) and sys.argv[3] or 'none'
-
-	client = redis.StrictRedis(host=host, port=redis_port)
-	server_info = client.info()
-
-	if metric:
-		if db and db in server_info.keys():
-			server_info['key_space_db_keys'] = server_info[db]['keys']
-			server_info['key_space_db_expires'] = server_info[db]['expires']
-			server_info['key_space_db_avg_ttl'] = server_info[db]['avg_ttl']
+	if args.metric:
+		if args.db and args.db in server_info.keys():
+			server_info['key_space_db_keys'] = server_info[args.db]['keys']
+			server_info['key_space_db_expires'] = server_info[args.db]['expires']
+			server_info['key_space_db_avg_ttl'] = server_info[args.db]['avg_ttl']
 		
 		def llen():
-			print (client.llen(db))
+			print (client.llen(args.db))
 
 		def llensum():
 			keys = client.keys('*')
@@ -111,21 +95,38 @@ else:
 			print (llensum)
 
 		def list_key_space_db():
-			if db in server_info:
-				print (db)
+			if args.db in server_info:
+				print (args.db)
 			else:
 				print ('database_detect')
 
 		def default():
-			if metric in server_info.keys():
-				print (server_info[metric])
+			if args.metric in server_info.keys():
+				print (server_info[args.metric])
 
 
 		{
 			'llen': llen,
 		 	'llenall': llensum,
 		 	'list_key_space_db': list_key_space_db,
-		}.get(metric, default)()
+		}.get(args.metric, default)()
 
 	else:
 		print ('Not selected metric');
+else:
+
+	client = redis.StrictRedis(host=args.hostname, port=args.redis_port, password=args.redis_pass)
+	server_info = client.info()
+
+	a = []
+	for i in server_info:
+		a.append(Metric(args.hostname, ('redis[%s]' % i), server_info[i]))
+
+	keys = client.keys('*')
+	llensum = 0
+	for key in keys:
+		llensum += client.llen(key)
+	a.append(Metric(args.hostname, 'redis[llenall]', llensum))
+
+
+	send_to_zabbix(a, zabbix_host, zabbix_port)
