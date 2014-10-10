@@ -33,7 +33,6 @@ Note: trap-message works only with python script
 zabbix_host = '127.0.0.1'	# Zabbix Server IP
 zabbix_port = 10051			# Zabbix Server Port
 hostname = 'redis.srv.name'	# Name of monitored server, like it shows in zabbix web ui
-redis_port = 6379			# Redis Server port
 ```
 
 3) In script path (`/etc/zabbix/script/redis/`) do:
@@ -42,11 +41,11 @@ pip install redis
 chmod +x zbx_redis_stats.py
 ```
 
-4) Configure cron to run script every one minute:
+4) Configure cron to run script every one minute with redis server params as arguments
 ```
 $ sudo crontab -e
 
-*/1 * * * * /etc/zabbix/script/nginx/zbx_redis_stats.py
+*/1 * * * * /etc/zabbix/script/nginx/zbx_redis_stats.py localhost -p 6379 -a mypassword
 ```
 
 5) Import `zbx_redis_trapper_template.xml` into zabbix in Tepmplate section web gui.
@@ -58,6 +57,10 @@ That is all :)
 1) Put `zbx_redis.conf` into your `zabbix_agentd.conf` config subdirectory (like: `/etc/zabbix/zabbix_agentd.d/`).
 
 2) Change script name in `zbx_redis.conf` to use `zbx_redis_stats.py` if need it (by default there is a .js version script).
+Redis server params can be passed to the python script as arguments e.g.:
+```
+zbx_redis_stats.py localhost -p 6379 -a mypassword
+```
 
 3) Change your zabbix_agentd.conf config so it will include this file:
 ```

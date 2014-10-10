@@ -3,8 +3,8 @@
 import sys, redis, json, re, struct, time, socket, argparse
 
 parser = argparse.ArgumentParser(description='Zabbix Redis status script')
-parser.add_argument('hostname')
-parser.add_argument('metric')
+parser.add_argument('hostname',nargs='?')
+parser.add_argument('metric',nargs='?')
 parser.add_argument('db',default='none',nargs='?')
 parser.add_argument('-p','--port',dest='redis_port',action='store',help='Redis server port',default=6379,type=int)
 parser.add_argument('-a','--auth',dest='redis_pass',action='store',help='Redis server pass',default=None)
