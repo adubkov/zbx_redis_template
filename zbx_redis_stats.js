@@ -58,6 +58,18 @@ client.on('ready', function(err) {
                     console.log('database_detect');
                 client.emit('quit');
                 break;
+            case 'dbsize':
+                if (client.server_info.db0) {
+                    var res = {};
+                    client.server_info.db0.split(',').map(function(el){
+                        var _el = el.split('=');
+                        res[_el[0]] = _el[1];
+                    });
+                    console.log(res.keys);
+                } else
+                    console.log('database_detect');
+                client.emit('quit');
+                break;
             default:
                 if (client.server_info.hasOwnProperty(metric))
                     console.log(client.server_info[metric]);
