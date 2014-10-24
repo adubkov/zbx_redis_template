@@ -1,8 +1,7 @@
-#!/usr/local/bin/node
-#
-# This software is licensed GNU GPL v2
-# Author: Alexey Dubkov <alexey.dubkov@gmail.com>
-#
+#!/usr/bin/env node
+
+// This software is licensed GNU GPL v2
+// Author: Alexey Dubkov <alexey.dubkov@gmail.com>
 
 var host = process.argv[2] || 'localhost',
     port = 6379,
