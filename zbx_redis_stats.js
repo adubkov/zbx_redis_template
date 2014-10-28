@@ -1,8 +1,7 @@
-#!/usr/local/bin/node
-#
-# This software is licensed GNU GPL v2
-# Author: Alexey Dubkov <alexey.dubkov@gmail.com>
-#
+#!/usr/bin/env node
+
+// This software is licensed GNU GPL v2
+// Author: Alexey Dubkov <alexey.dubkov@gmail.com>
 
 var host = process.argv[2] || 'localhost',
     port = 6379,
@@ -55,6 +54,18 @@ client.on('ready', function(err) {
             case 'list_key_space_db':
                 if (client.server_info.db0) {
                     console.log('db0');
+                } else
+                    console.log('database_detect');
+                client.emit('quit');
+                break;
+            case 'dbsize':
+                if (client.server_info.db0) {
+                    var res = {};
+                    client.server_info.db0.split(',').map(function(el){
+                        var _el = el.split('=');
+                        res[_el[0]] = _el[1];
+                    });
+                    console.log(res.keys);
                 } else
                     console.log('database_detect');
                 client.emit('quit');
