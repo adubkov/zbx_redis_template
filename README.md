@@ -45,7 +45,7 @@ chmod +x zbx_redis_stats.py
 ```
 $ sudo crontab -e
 
-*/1 * * * * /etc/zabbix/script/nginx/zbx_redis_stats.py localhost -p 6379 -a mypassword
+*/1 * * * * /etc/zabbix/script/redis/zbx_redis_stats.py localhost -p 6379 -a mypassword
 ```
 
 5) Import `zbx_redis_trapper_template.xml` into zabbix in Tepmplate section web gui.
