@@ -1791,7 +1791,7 @@
                     <snmp_community/>
                     <multiplier>0</multiplier>
                     <snmp_oid/>
-                    <key>net.tcp.port[127.0.0.1,6379]</key>
+                    <key>net.tcp.port[{HOST.IP},6379]</key>
                     <delay>30</delay>
                     <history>90</history>
                     <trends>365</trends>
@@ -2001,7 +2001,7 @@
     </templates>
     <triggers>
         <trigger>
-            <expression>{Template Redis 2:net.tcp.port[127.0.0.1,6379].last(0)}=0</expression>
+            <expression>{Template Redis 2:net.tcp.port[{HOST.IP},6379].last(0)}=0</expression>
             <name>Redis is down on {HOSTNAME}</name>
             <url/>
             <status>0</status>
