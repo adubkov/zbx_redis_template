@@ -120,7 +120,7 @@ def main():
             }.get(args.metric, default)()
 
         else:
-            print('Not selected metric');
+            print('Not selected metric')
     else:
         client = redis.StrictRedis(host=redis_hostname, port=args.redis_port, password=args.redis_pass)
         server_info = client.info()
